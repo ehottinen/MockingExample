@@ -147,7 +147,59 @@ class BookingSystemTest {
                     .extracting(Room::getId)
                     .containsExactlyInAnyOrderElementsOf(expectedRoomIds);
         }
+    }
+    private static Stream<Arguments> provideCancelBookingTestCases() {
+        LocalDateTime now = LocalDateTime.of(2025, 1, 28, 10, 0);
 
+        return Stream.of(
+                // Normalt fall: giltig avbokning
+                Arguments.of("booking1", now.plusHours(1), now.plusHours(2), true, null, null),
+
+                // Fel: boknings-id är null
+                Arguments.of(null, now.plusHours(1), now.plusHours(2), false, IllegalArgumentException.class, "Boknings-id kan inte vara null"),
+
+                // Fel: bokning finns inte
+                Arguments.of("nonexistent", now.plusHours(1), now.plusHours(2), false, null, null),
+
+                // Fel: avboka en redan påbörjad bokning
+                Arguments.of("booking1", now.minusHours(1), now.plusHours(1), false, IllegalStateException.class, "Kan inte avboka påbörjad eller avslutad bokning")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideCancelBookingTestCases")
+    void cancelBooking_shouldHandleVariousScenarios(String bookingId, LocalDateTime startTime, LocalDateTime endTime,
+                                                    boolean expectedResult, Class<Exception> expectedException, String errorMessage) throws NotificationException {
+        // Arrange
+        LocalDateTime now = LocalDateTime.of(2025, 1, 28, 10, 0);
+        when(timeProvider.getCurrentTime()).thenReturn(now);
+
+        Room room = new Room("room1");
+        Booking booking = new Booking(bookingId, "room1", startTime, endTime);
+
+        if (bookingId != null && !"nonexistent".equals(bookingId)) {
+            room.addBooking(booking);
+        }
+
+        when(roomRepository.findAll()).thenReturn(List.of(room));
+
+        // Act & Assert
+        if (expectedException != null) {
+            assertThatThrownBy(() -> bookingSystem.cancelBooking(bookingId))
+                    .isInstanceOf(expectedException)
+                    .hasMessage(errorMessage);
+        } else {
+            boolean result = bookingSystem.cancelBooking(bookingId);
+            assertThat(result).isEqualTo(expectedResult);
+
+            if (expectedResult) {
+                verify(roomRepository).save(room);
+                verify(notificationService).sendCancellationConfirmation(booking);
+            } else {
+                verify(roomRepository, never()).save(any());
+                verify(notificationService, never()).sendCancellationConfirmation(any());
+            }
+        }
     }
 }
 
