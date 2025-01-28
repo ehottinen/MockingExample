@@ -90,5 +90,64 @@ class BookingSystemTest {
             }
         }
     }
+    private static Stream<Arguments> provideGetAvailableRoomsTestCases() {
+        LocalDateTime now = LocalDateTime.of(2025, 1, 28, 10, 0);
+
+        return Stream.of(
+                // Normalt fall: ett rum är tillgängligt
+                Arguments.of(now.plusHours(1), now.plusHours(2), List.of("room1"), null),
+
+                // Fel: sluttid före starttid
+                Arguments.of(now.plusHours(2), now.plusHours(1), null, IllegalArgumentException.class),
+
+                // Fel: start- eller sluttid är null
+                Arguments.of(null, now.plusHours(2), null, IllegalArgumentException.class),
+
+                // Inga rum tillgängliga
+                Arguments.of(now.plusHours(1), now.plusHours(2), List.of(), null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideGetAvailableRoomsTestCases")
+    void getAvailableRooms_shouldHandleVariousScenarios(LocalDateTime startTime, LocalDateTime endTime,
+                                                        List<String> expectedRoomIds, Class<Exception> expectedException) {
+        // Arrange
+        LocalDateTime now = LocalDateTime.of(2025, 1, 28, 10, 0);
+
+        Room room1 = new Room("room1");
+        Room room2 = new Room("room2");
+
+        when(roomRepository.findAll()).thenReturn(List.of(room1, room2));
+
+        // Simulera rumstillgänglighet om det är relevant
+        if (expectedRoomIds != null) {
+            if (expectedRoomIds.contains("room1")) {
+                when(room1.isAvailable(startTime, endTime)).thenReturn(true);
+            } else {
+                when(room1.isAvailable(startTime, endTime)).thenReturn(false);
+            }
+
+            if (expectedRoomIds.contains("room2")) {
+                when(room2.isAvailable(startTime, endTime)).thenReturn(true);
+            } else {
+                when(room2.isAvailable(startTime, endTime)).thenReturn(false);
+            }
+        }
+
+        // Act & Assert
+        if (expectedException != null) {
+            assertThatThrownBy(() -> bookingSystem.getAvailableRooms(startTime, endTime))
+                    .isInstanceOf(expectedException);
+        } else {
+            List<Room> availableRooms = bookingSystem.getAvailableRooms(startTime, endTime);
+            assert expectedRoomIds != null;
+            assertThat(availableRooms)
+                    .hasSize(expectedRoomIds.size())
+                    .extracting(Room::getId)
+                    .containsExactlyInAnyOrderElementsOf(expectedRoomIds);
+        }
+
+    }
 }
 
