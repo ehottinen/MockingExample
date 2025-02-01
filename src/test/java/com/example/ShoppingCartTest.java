@@ -16,7 +16,7 @@ class ShoppingCartTest {
 
     @Test
     void addItem_shouldIncreaseCartSize() {
-        Item item = new Item("Purjolök", 10.0);
+        Item item = new Item("Leek", 10.0);
         cart.addItem(item, 2);
         assertThat(cart.getItems()).hasSize(1);
         assertThat(cart.getItems().get(0).getQuantity()).isEqualTo(2);
@@ -34,9 +34,9 @@ class ShoppingCartTest {
     @Test
     void removeItem_shouldDecreaseCartSize() {
 
-        Item item = new Item("Banan", 5.0);
+        Item item = new Item("Banana", 5.0);
         cart.addItem(item, 3);
-        cart.removeItem("Banan");
+        cart.removeItem("Banana");
         assertThat(cart.getItems()).isEmpty();
     }
 
@@ -51,8 +51,8 @@ class ShoppingCartTest {
 
     @Test
     void calculateTotalPrice_shouldReturnCorrectSum() {
-        cart.addItem(new Item("Mjölk", 15.0), 1);
-        cart.addItem(new Item("Bröd", 25.0), 2);
+        cart.addItem(new Item("Milk", 15.0), 1);
+        cart.addItem(new Item("Bread", 25.0), 2);
         double total = cart.calculateTotalPrice();
         assertThat(total).isEqualTo(15.0 + (25.0 * 2));
     }

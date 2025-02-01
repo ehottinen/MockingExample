@@ -16,4 +16,7 @@ public class CartItem {
     public Item getItem() {
         return item;
     }
+
+    public void setQuantity(int newQuantity) {
+    }
 }

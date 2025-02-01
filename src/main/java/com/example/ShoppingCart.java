@@ -13,27 +13,31 @@ public class ShoppingCart {
         }
         items.add(new CartItem(item, quantity));
     }
+
     public void removeItem(String itemName) {
-        items.removeIf(cartItem -> cartItem.getItem().getName().toLowerCase().equalsIgnoreCase(itemName));
+        items.removeIf(cartItem -> cartItem.getItem().getName().equalsIgnoreCase(itemName));
     }
+
     public void updateQuantity(String itemName, int newQuantity) {
         if (newQuantity <= 0) {
             throw new IllegalArgumentException("Kvantitet måste vara positiv");
         }
-    }
 
         for (CartItem cartItem : items) {
-        if (cartItem.getItem().getName().equalsIgnoreCase(itemName)) {
-            cartItem.setQuantity(newQuantity);
-            return;
+            if (cartItem.getItem().getName().equalsIgnoreCase(itemName)) {
+                cartItem.setQuantity(newQuantity);
+                return;
+            }
         }
     }
+
     public void applyDiscount(double percent) {
         if (percent < 0 || percent > 100) {
             throw new IllegalArgumentException("Rabatt måste vara mellan 0 och 100%");
         }
         this.discountPercentage = percent;
     }
+
     public double calculateSubtotal() {
         return items.stream()
                 .mapToDouble(cartItem -> cartItem.getItem().getPrice() * cartItem.getQuantity())
@@ -41,15 +45,11 @@ public class ShoppingCart {
     }
 
     public double calculateTotalPrice() {
-        return items.stream()
-                .mapToDouble(cartItem -> cartItem.getItem().getPrice() * cartItem.getQuantity())
-                .sum();
-    }
-    public void applyDiscount(double percent) {
         double subtotal = calculateSubtotal();
         double discountAmount = subtotal * (discountPercentage / 100);
         return subtotal - discountAmount;
     }
+
     public List<CartItem> getItems() {
         return items;
     }
