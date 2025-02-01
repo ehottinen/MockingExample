@@ -17,6 +17,6 @@ public class ShoppingCart {
         return items;
     }
     public void removeItem(String itemName) {
-        items.removeIf(cartItem -> cartItem.getItem().getName().equals(itemName));
+        items.removeIf(cartItem -> cartItem.getItem().getName().toLowerCase().equalsIgnoreCase(itemName));
     }
 }
