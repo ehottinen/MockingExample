@@ -28,7 +28,7 @@ class ShoppingCartTest {
 
         assertThatThrownBy(() -> cart.addItem(item, -1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Kvantitet måste vara positiv");
+                .hasMessage("Kvantitet måste vara positiv!");
     }
 
     @Test
