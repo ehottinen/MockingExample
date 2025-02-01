@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,7 +56,7 @@ class BookingSystemTest {
     @MethodSource("provideBookRoomTestCases")
     void bookRoom_shouldHandleVariousScenarios(String roomId, LocalDateTime startTime, LocalDateTime endTime,
                                                boolean expectedResult, Class<Exception> expectedException, String errorMessage) throws NotificationException {
-        // Arrange
+        // förbered testdata
         LocalDateTime now = LocalDateTime.of(2025, 1, 28, 10, 0);
         when(timeProvider.getCurrentTime()).thenReturn(now);
 
@@ -112,11 +113,12 @@ class BookingSystemTest {
     @MethodSource("provideGetAvailableRoomsTestCases")
     void getAvailableRooms_shouldHandleVariousScenarios(LocalDateTime startTime, LocalDateTime endTime,
                                                         List<String> expectedRoomIds, Class<Exception> expectedException) {
-        // Arrange
         LocalDateTime now = LocalDateTime.of(2025, 1, 28, 10, 0);
 
-        Room room1 = new Room("room1");
-        Room room2 = new Room("room2");
+        Room room1 = mock(Room.class);
+        Mockito.when(room1.getId()).thenReturn("room1");
+
+        Room room2 = mock(Room.class);
 
         when(roomRepository.findAll()).thenReturn(List.of(room1, room2));
 
@@ -135,7 +137,6 @@ class BookingSystemTest {
             }
         }
 
-        // Act & Assert
         if (expectedException != null) {
             assertThatThrownBy(() -> bookingSystem.getAvailableRooms(startTime, endTime))
                     .isInstanceOf(expectedException);
@@ -174,7 +175,7 @@ class BookingSystemTest {
         LocalDateTime now = LocalDateTime.of(2025, 1, 28, 10, 0);
         when(timeProvider.getCurrentTime()).thenReturn(now);
 
-        Room room = new Room("room1");
+        Room room = mock(Room.class);
         Booking booking = new Booking(bookingId, "room1", startTime, endTime);
 
         if (bookingId != null && !"nonexistent".equals(bookingId)) {

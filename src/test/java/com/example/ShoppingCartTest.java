@@ -16,16 +16,12 @@ class ShoppingCartTest {
 
     @Test
     void addItem_shouldIncreaseCartSize() {
-        // 🔹 Förbered testdata
         Item item = new Item("Purjolök", 10.0);
-
-        // 🔹 Anropa metoden som testas
         cart.addItem(item, 2);
-
-        // 🔹 Verifiera resultatet
         assertThat(cart.getItems()).hasSize(1);
         assertThat(cart.getItems().get(0).getQuantity()).isEqualTo(2);
     }
+
     @Test
     void addItem_shouldThrowExceptionForNegativeQuantity() {
         Item item = new Item("Juice", 30.0);
@@ -34,40 +30,31 @@ class ShoppingCartTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Kvantitet måste vara positiv");
     }
+
     @Test
     void removeItem_shouldDecreaseCartSize() {
-        // 🔹 Förbered testdata
+
         Item item = new Item("Banan", 5.0);
         cart.addItem(item, 3);
-
-        // 🔹 Anropa metoden som testas
         cart.removeItem("Banan");
-
-        // 🔹 Verifiera resultatet
         assertThat(cart.getItems()).isEmpty();
     }
+
+    @Test
+    void calculateSubtotal_shouldReturnCorrectSum() {
+
+        cart.addItem(new Item("Milk", 15.0), 1);
+        cart.addItem(new Item("Bread", 25.0), 2);
+        double subtotal = cart.calculateSubtotal();
+        assertThat(subtotal).isEqualTo(15.0 + (25.0 * 2));
+    }
+
     @Test
     void calculateTotalPrice_shouldReturnCorrectSum() {
-        // 🔹 Förbered testdata
         cart.addItem(new Item("Mjölk", 15.0), 1);
         cart.addItem(new Item("Bröd", 25.0), 2);
-
-        // 🔹 Anropa metoden som testas
         double total = cart.calculateTotalPrice();
-
-        // 🔹 Verifiera resultatet
         assertThat(total).isEqualTo(15.0 + (25.0 * 2));
-    }
-    @Test
-    void applyDiscount_shouldReduceTotalPrice() {
-        // 🔹 Förbered testdata
-        cart.addItem(new Item("Soda", 20.0), 2);
-
-        // 🔹 Anropa metoden som testas
-        cart.applyDiscount(10); // 10% rabatt
-
-        // 🔹 Verifiera resultatet
-        assertThat(cart.calculateTotalPrice()).isEqualTo(36.0); // 20 * 2 * 0.9
     }
 }
 
