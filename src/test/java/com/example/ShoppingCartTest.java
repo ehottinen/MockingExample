@@ -34,5 +34,18 @@ class ShoppingCartTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Kvantitet måste vara positiv");
     }
+    @Test
+    void removeItem_shouldDecreaseCartSize() {
+        // 🔹 Förbered testdata
+        Item item = new Item("Banana", 5.0);
+        cart.addItem(item, 3);
+
+        // 🔹 Anropa metoden som testas
+        cart.removeItem("Banana");
+
+        // 🔹 Verifiera resultatet
+        assertThat(cart.getItems()).isEmpty();
+    }
+
 }
 
