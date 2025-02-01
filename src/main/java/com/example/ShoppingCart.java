@@ -16,4 +16,7 @@ public class ShoppingCart {
     public List<CartItem> getItems() {
         return items;
     }
+    public void removeItem(String itemName) {
+        items.removeIf(cartItem -> cartItem.getItem().getName().equals(itemName));
+    }
 }

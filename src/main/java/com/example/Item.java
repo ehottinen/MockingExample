@@ -12,4 +12,8 @@ public class Item {
     public double getPrice() {
         return price;
     }
+
+    public Object getName() {
+        return name;
+    }
 }
