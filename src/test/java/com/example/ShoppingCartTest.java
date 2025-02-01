@@ -37,15 +37,26 @@ class ShoppingCartTest {
     @Test
     void removeItem_shouldDecreaseCartSize() {
         // 🔹 Förbered testdata
-        Item item = new Item("Banana", 5.0);
+        Item item = new Item("Banan", 5.0);
         cart.addItem(item, 3);
 
         // 🔹 Anropa metoden som testas
-        cart.removeItem("Banana");
+        cart.removeItem("Banan");
 
         // 🔹 Verifiera resultatet
         assertThat(cart.getItems()).isEmpty();
     }
+    @Test
+    void calculateTotalPrice_shouldReturnCorrectSum() {
+        // 🔹 Förbered testdata
+        cart.addItem(new Item("Mjölk", 15.0), 1);
+        cart.addItem(new Item("Bröd", 25.0), 2);
 
+        // 🔹 Anropa metoden som testas
+        double total = cart.calculateTotalPrice();
+
+        // 🔹 Verifiera resultatet
+        assertThat(total).isEqualTo(15.0 + (25.0 * 2));
+    }
 }
 

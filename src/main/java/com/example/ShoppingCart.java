@@ -12,11 +12,15 @@ public class ShoppingCart {
         }
         items.add(new CartItem(item, quantity));
     }
-
     public List<CartItem> getItems() {
         return items;
     }
     public void removeItem(String itemName) {
         items.removeIf(cartItem -> cartItem.getItem().getName().toLowerCase().equalsIgnoreCase(itemName));
+    }
+    public double calculateTotalPrice() {
+        return items.stream()
+                .mapToDouble(cartItem -> cartItem.getItem().getPrice() * cartItem.getQuantity())
+                .sum();
     }
 }
