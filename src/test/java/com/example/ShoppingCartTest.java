@@ -58,5 +58,16 @@ class ShoppingCartTest {
         // 🔹 Verifiera resultatet
         assertThat(total).isEqualTo(15.0 + (25.0 * 2));
     }
+    @Test
+    void applyDiscount_shouldReduceTotalPrice() {
+        // 🔹 Förbered testdata
+        cart.addItem(new Item("Soda", 20.0), 2);
+
+        // 🔹 Anropa metoden som testas
+        cart.applyDiscount(10); // 10% rabatt
+
+        // 🔹 Verifiera resultatet
+        assertThat(cart.calculateTotalPrice()).isEqualTo(36.0); // 20 * 2 * 0.9
+    }
 }
 

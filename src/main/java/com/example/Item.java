@@ -16,4 +16,8 @@ public class Item {
     public String getName() {
         return name;
     }
+
+    public void setPrice(double discountedPrice) {
+        return;
+    }
 }
