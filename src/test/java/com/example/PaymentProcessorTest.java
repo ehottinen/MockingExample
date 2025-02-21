@@ -1,5 +1,6 @@
-package com.example.payment;
+package com.example;
 
+import com.example.payment.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
@@ -22,7 +23,7 @@ class PaymentProcessorTest {
 
     @Test
     void processPayment_shouldReturnTrueWhenPaymentSucceeds() {
-        when(paymentService.charge(100.0)).thenReturn(new PaymentApiResponse(true));
+        when(paymentService.charge(100.0)).thenReturn(new PaymentApiResponse(true, "Payment successful"));
 
         boolean result = paymentProcessor.processPayment(100.0);
 
@@ -34,7 +35,7 @@ class PaymentProcessorTest {
 
     @Test
     void processPayment_shouldReturnFalseWhenPaymentFails() {
-        when(paymentService.charge(100.0)).thenReturn(new PaymentApiResponse(false));
+        when(paymentService.charge(100.0)).thenReturn(new PaymentApiResponse(false, "Payment failed"));
 
         boolean result = paymentProcessor.processPayment(100.0);
 

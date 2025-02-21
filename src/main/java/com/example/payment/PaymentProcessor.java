@@ -17,7 +17,6 @@ public class PaymentProcessor {
             }
 
             PaymentApiResponse response = paymentService.charge(amount);
-
             if (response.isSuccess()) {
                 databaseService.savePayment(amount, "SUCCESS");
                 emailService.sendPaymentConfirmation("user@example.com", amount);
