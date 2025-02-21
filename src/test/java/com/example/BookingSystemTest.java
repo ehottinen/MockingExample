@@ -52,23 +52,38 @@ class BookingSystemTest {
 
     @Test
     void bookRoom_shouldFailWhenStartTimeIsInThePast() {
-        assertThatThrownBy(() -> bookingSystem.bookRoom("room1", now.minusHours(1), now.plusHours(1)))
+        // Arrange
+        LocalDateTime startTime = now.minusHours(1); // Move method calls outside lambda
+        LocalDateTime endTime = now.plusHours(1);
+
+        // Act & Assert
+        assertThatThrownBy(() -> bookingSystem.bookRoom("room1", startTime, endTime))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ERROR_PAST_BOOKING);
     }
 
     @Test
     void bookRoom_shouldFailWhenEndTimeIsBeforeStartTime() {
-        assertThatThrownBy(() -> bookingSystem.bookRoom("room1", now.plusHours(2), now.plusHours(1)))
+        // Arrange
+        LocalDateTime startTime = now.plusHours(2);
+        LocalDateTime endTime = now.plusHours(1); // Move method calls outside lambda
+
+        // Act & Assert
+        assertThatThrownBy(() -> bookingSystem.bookRoom("room1", startTime, endTime))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ERROR_END_BEFORE_START);
     }
 
+
     @Test
     void bookRoom_shouldFailWhenRoomDoesNotExist() {
+        // Arrange
+        LocalDateTime startTime = now.plusHours(1);
+        LocalDateTime endTime = now.plusHours(2);
         when(roomRepository.findById("nonexistent")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> bookingSystem.bookRoom("nonexistent", now.plusHours(1), now.plusHours(2)))
+        // Act & Assert
+        assertThatThrownBy(() -> bookingSystem.bookRoom("nonexistent", startTime, endTime))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ERROR_ROOM_NOT_FOUND);
     }
@@ -107,7 +122,12 @@ class BookingSystemTest {
 
     @Test
     void getAvailableRooms_shouldThrowExceptionWhenEndTimeBeforeStartTime() {
-        assertThatThrownBy(() -> bookingSystem.getAvailableRooms(now.plusHours(2), now.plusHours(1)))
+        // Arrange
+        LocalDateTime startTime = now.plusHours(2);
+        LocalDateTime endTime = now.plusHours(1); // Move method calls outside lambda
+
+        // Act & Assert
+        assertThatThrownBy(() -> bookingSystem.getAvailableRooms(startTime, endTime))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ERROR_END_BEFORE_START);
     }
