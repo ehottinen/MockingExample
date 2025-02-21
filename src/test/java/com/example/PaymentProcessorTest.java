@@ -17,7 +17,7 @@ class PaymentProcessorTest {
         paymentService = mock(PaymentService.class);
         databaseService = mock(DatabaseService.class);
         emailService = mock(EmailService.class);
-        paymentProcessor = new PaymentProcessor(paymentService);
+        paymentProcessor = new PaymentProcessor(paymentService, databaseService, emailService);
     }
 
     @Test
